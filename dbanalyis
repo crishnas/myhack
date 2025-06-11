@@ -1,0 +1,108 @@
+import streamlit as st
+import sqlite3
+import pandas as pd
+import requests
+import matplotlib.pyplot as plt
+from collections import Counter
+
+# Fixed DB Config
+DB_PATH = "sentiment.db"
+TABLE_NAME = "texts"
+TEXT_COLUMN = "text"
+OLLAMA_URL = "http://localhost:11434/api/generate"
+MODEL_NAME = "meta-Llama-3.1-8B-instruct_f32:latest"
+
+# Query LLM with custom prompt
+def query_ollama(prompt):
+    try:
+        res = requests.post(
+            OLLAMA_URL,
+            json={"model": MODEL_NAME, "prompt": prompt, "stream": False},
+            timeout=120
+        )
+        res.raise_for_status()
+        return res.json()["response"].strip()
+    except requests.exceptions.RequestException as e:
+        return f"Request Error: {e}"
+    except Exception as e:
+        return f"Error: {e}"
+
+# Load data from SQLite
+@st.cache_data
+def load_db_table(db_path, table, column):
+    conn = sqlite3.connect(db_path)
+    df = pd.read_sql_query(f"SELECT rowid AS id, {column} FROM {table}", conn)
+    conn.close()
+    return df
+
+# Streamlit UI
+st.title("🧠 ChatGPT-style NLP on SQLite Table")
+st.markdown(f"📂 **Database**: `{DB_PATH}`  |  📋 **Table**: `{TABLE_NAME}`  |  📝 **Column**: `{TEXT_COLUMN}`")
+
+df = load_db_table(DB_PATH, TABLE_NAME, TEXT_COLUMN)
+
+st.markdown("### ✏️ Enter your custom NLP prompt")
+user_prompt = st.text_area("Example: Summarize this text, or Extract complaint details, or Classify as Product/Service", height=100)
+
+if st.button("🔍 Run Analysis"):
+    if not user_prompt.strip():
+        st.warning("Please enter a valid prompt.")
+    else:
+        with st.spinner("Running prompt on each row using LLM..."):
+            # Apply prompt row-wise
+            def build_prompt(text): 
+                return f"{user_prompt.strip()}\n\nText:\n{text}"
+            df["llm_output"] = df[TEXT_COLUMN].apply(lambda x: query_ollama(build_prompt(str(x))))
+
+            st.success("✅ Analysis complete.")
+            st.dataframe(df[["id", TEXT_COLUMN, "llm_output"]])
+
+            # Sentiment Analysis
+            sentiment_count = df["llm_output"].apply(lambda x: 1 if "positive" in x.lower() else 0).sum()
+            neutral_count = df["llm_output"].apply(lambda x: 1 if "neutral" in x.lower() else 0).sum()
+            negative_count = df["llm_output"].apply(lambda x: 1 if "negative" in x.lower() else 0).sum()
+
+            # Bar Chart
+            fig, ax = plt.subplots()
+            ax.bar(["Positive", "Neutral", "Negative"], [sentiment_count, neutral_count, negative_count])
+            ax.set_title("Sentiment Analysis")
+            ax.set_xlabel("Sentiment")
+            ax.set_ylabel("Count")
+            st.pyplot(fig)
+
+            # Line Chart
+            sentiment_over_time = []
+            for i in range(len(df)):
+                if "positive" in df["llm_output"][i].lower():
+                    sentiment_over_time.append(1)
+                elif "negative" in df["llm_output"][i].lower():
+                    sentiment_over_time.append(-1)
+                else:
+                    sentiment_over_time.append(0)
+
+            fig, ax = plt.subplots()
+            ax.plot(sentiment_over_time)
+            ax.set_title("Sentiment Over Time")
+            ax.set_xlabel("Index")
+            ax.set_ylabel("Sentiment")
+            st.pyplot(fig)
+
+            # Word Frequency
+            word_frequency = Counter(" ".join(df["llm_output"]).split()).most_common(10)
+            fig, ax = plt.subplots()
+            ax.bar([x[0] for x in word_frequency], [x[1] for x in word_frequency])
+            ax.set_title("Word Frequency")
+            ax.set_xlabel("Word")
+            ax.set_ylabel("Frequency")
+            st.pyplot(fig)
+
+            # Pie Chart
+            labels = ["Positive", "Neutral", "Negative"]
+            sizes = [sentiment_count, neutral_count, negative_count]
+            fig, ax = plt.subplots()
+            ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+            ax.set_title("Sentiment Distribution")
+            st.pyplot(fig)
+
+            csv = df.to_csv(index=False).encode("utf-16")
+            st.download_button("⬇️ Download Result as CSV", csv, "nlp_result.csv", mime="text/csv")
