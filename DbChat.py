@@ -20,17 +20,19 @@ def clean_text(text):
 
 # Load data from SQLite
 def load_data():
-    conn = sqlite3.connect(DB_PATH)
-    df = pd.read_sql_query(f"SELECT rowid AS id, * FROM {TABLE_NAME}", conn)
-    
-    # Apply clean_text only to string (object) columns
-    for col in df.select_dtypes(include=['object']).columns:
-        df[col] = df[col].map(clean_text)
-    
-    conn.close()
-    return df
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        df = pd.read_sql_query(f"SELECT rowid AS id, * FROM {TABLE_NAME}", conn)
+        for col in df.select_dtypes(include=['object']).columns:
+            df[col] = df[col].map(clean_text)
+        conn.close()
+        st.success(f"✅ Loaded {len(df)} records from table '{TABLE_NAME}'.")
+        return df
+    except Exception as e:
+        st.error(f"❌ Failed to load data: {e}")
+        return pd.DataFrame()
 
-# Convert row to text
+# Convert row to prompt string
 def row_to_prompt(row: pd.Series):
     return "\n".join([f"{col}: {row[col]}" for col in row.index if col != "id"])
 
@@ -60,8 +62,10 @@ def query_llm(prompt):
 if "prompt_history" not in st.session_state:
     st.session_state.prompt_history = []
 
-# Layout
+# Page layout
 st.set_page_config(layout="wide")
+st.write("🔄 App loaded.")
+
 left_col, right_col = st.columns([1, 3])
 
 # Left sidebar - Prompt History
@@ -93,26 +97,32 @@ with right_col:
             st.session_state.prompt_history.append(user_prompt.strip())
             df = load_data()
 
-            with st.spinner("Processing records through LLM..."):
-                df["llm_input"] = df.apply(row_to_prompt, axis=1)
-                df["llm_output"] = df["llm_input"].apply(lambda x: query_llm(f"{user_prompt}\n\n{x}"))
+            if df.empty:
+                st.warning("No data to process.")
+            else:
+                st.write("📦 Data shape:", df.shape)
+                st.write("🔁 Sample input row:", row_to_prompt(df.iloc[0]))
 
-            st.success("✅ Analysis complete.")
-            st.dataframe(df[["id", "llm_output"]])
+                with st.spinner("Processing records through LLM..."):
+                    df["llm_input"] = df.apply(row_to_prompt, axis=1)
+                    df["llm_output"] = df["llm_input"].apply(lambda x: query_llm(f"{user_prompt}\n\n{x}"))
 
-            if st.checkbox("📈 Show Chart from Output"):
-                colname = st.selectbox("Group LLM output by:", options=["llm_output"])
-                chart_type = st.radio("Chart Type", ["Pie", "Bar"])
+                st.success("✅ NLP analysis complete.")
+                st.dataframe(df[["id", "llm_output"]])
 
-                count_df = df[colname].value_counts().reset_index()
-                count_df.columns = ["label", "count"]
+                if st.checkbox("📈 Show Chart from Output"):
+                    colname = st.selectbox("Group LLM output by:", options=["llm_output"])
+                    chart_type = st.radio("Chart Type", ["Pie", "Bar"])
 
-                if chart_type == "Pie":
-                    fig = px.pie(count_df, names="label", values="count", title="Pie Chart of LLM Output")
-                else:
-                    fig = px.bar(count_df, x="label", y="count", title="Bar Chart of LLM Output")
+                    count_df = df[colname].value_counts().reset_index()
+                    count_df.columns = ["label", "count"]
 
-                st.plotly_chart(fig)
+                    if chart_type == "Pie":
+                        fig = px.pie(count_df, names="label", values="count", title="Pie Chart of LLM Output")
+                    else:
+                        fig = px.bar(count_df, x="label", y="count", title="Bar Chart of LLM Output")
 
-            csv = df.to_csv(index=False).encode("utf-8")
-            st.download_button("⬇️ Download Results", csv, "nlp_result_full_table.csv", mime="text/csv")
+                    st.plotly_chart(fig)
+
+                csv = df.to_csv(index=False).encode("utf-8")
+                st.download_button("⬇️ Download Results", csv, "nlp_result_full_table.csv", mime="text/csv")
