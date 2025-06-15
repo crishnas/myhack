@@ -1,0 +1,40 @@
+import cx_Oracle
+import os
+import sys
+
+# Optional: Set environment variables (only if not set globally)
+os.environ["KRB5_CONFIG"] = "/etc/krb5.conf"
+os.environ["ORACLE_HOME"] = "/opt/oracle/instantclient_21_9"
+os.environ["TNS_ADMIN"] = "/opt/oracle/network/admin"
+os.environ["LD_LIBRARY_PATH"] = os.environ["ORACLE_HOME"] + "/lib"
+
+def connect_kerberos():
+    try:
+        # This assumes sqlnet.ora is configured for Kerberos and the ticket exists
+        dsn = "your_db_host:1521/your_service_name"  # or use tns alias like "GAIASVC"
+
+        print("🔐 Connecting to Oracle using Kerberos authentication...")
+        connection = cx_Oracle.connect(
+            dsn=dsn,
+            mode=cx_Oracle.AUTH_MODE_EXTERNAL  # Enables Kerberos (external OS) auth
+        )
+
+        print("✅ Connected successfully.")
+        cursor = connection.cursor()
+        cursor.execute("SELECT user FROM dual")
+        result = cursor.fetchone()
+        print(f"Logged in as: {result[0]}")
+
+        # Clean up
+        cursor.close()
+        connection.close()
+        print("🔒 Connection closed.")
+
+    except cx_Oracle.DatabaseError as e:
+        error, = e.args
+        print("❌ Database connection error:")
+        print(f"  ORA-{error.code}: {error.message}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    connect_kerberos()
