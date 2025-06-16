@@ -1,19 +1,23 @@
-def sum_all_substrings_from_file(file_path: str) -> int:
-    total = 0
-    with open(file_path, 'r') as f:
+def sum_all_substrings_from_file(filepath):
+    with open(filepath, "r") as f:
         content = f.read()
-        digits_only = ''.join(filter(str.isdigit, content))
 
-        n = len(digits_only)
-        for i in range(n):
-            for l in range(1, min(10, n - i) + 1):
-                num_str = digits_only[i:i+l].lstrip("0")
-                if num_str:  # skip if it was all zeros
-                    total += int(num_str)
-    return total
+    # Extract only digits from the file content
+    digits = ''.join(filter(str.isdigit, content))
+    total_sum = 0
+    n = len(digits)
 
-# Example usage
-if __name__ == "__main__":
-    file_path = "input.txt"  # change to your file name
-    total = sum_all_substrings_from_file(file_path)
-    print(f"✅ Total sum from file: {total}")
+    for i in range(n):
+        seen = set()
+        for length in range(1, 11):  # 1 to 10 digits
+            if i + length <= n:
+                substr = digits[i:i+length].lstrip('0') or '0'
+                if substr not in seen:
+                    seen.add(substr)
+                    total_sum += int(substr)
+
+    return total_sum
+
+# Example usage:
+file_path = "your_input_file.txt"  # Replace with your actual file
+print("Total Sum:", sum_all_substrings_from_file(file_path))
