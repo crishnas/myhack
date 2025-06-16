@@ -1,0 +1,19 @@
+def compute_sum_from_digits_string(digits: str) -> int:
+    total = 0
+    n = len(digits)
+
+    for i in range(n):
+        for length in range(1, 11):  # From 1 to 10 digits
+            if i + length <= n:
+                num_str = digits[i:i+length].lstrip('0') or '0'
+                total += int(num_str)
+    return total
+
+
+# Example usage
+if __name__ == "__main__":
+    with open("randomDigitsinput.txt", "r") as f:
+        digits = f.read().strip().replace('\n', '')
+    
+    result = compute_sum_from_digits_string(digits)
+    print(f"Total Sum: {result}")
