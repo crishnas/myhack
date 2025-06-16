@@ -41,3 +41,26 @@ if __name__ == "__main__":
     
     result = compute_total_sum(digits)
     print(f"Total Sum: {result}")
+
+
+def sum_all_contiguous_numbers(filepath: str) -> int:
+    with open(filepath, 'r') as f:
+        digits = f.read().strip().replace('\n', '')
+
+    total = 0
+    n = len(digits)
+
+    for i in range(n):
+        for length in range(1, 11):  # Lengths from 1 to 10
+            if i + length <= n:
+                substring = digits[i:i+length]
+                number = int(substring.lstrip('0') or '0')  # Treat "03" as 3
+                total += number
+
+    return total
+
+# Example usage
+if __name__ == "__main__":
+    file_path = "randomDigitsinput.txt"  # Replace with your actual file path
+    result = sum_all_contiguous_numbers(file_path)
+    print("Final Sum =", result)
