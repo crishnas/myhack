@@ -1,13 +1,19 @@
-def sum_all_substrings(text: str) -> int:
+def sum_all_substrings_from_file(file_path: str) -> int:
     total = 0
-    n = len(text)
-    for i in range(n):
-        for l in range(1, min(10, n - i) + 1):
-            num_str = text[i:i+l].lstrip("0")
-            if num_str:  # Exclude zeros and empty
-                total += int(num_str)
+    with open(file_path, 'r') as f:
+        content = f.read()
+        digits_only = ''.join(filter(str.isdigit, content))
+
+        n = len(digits_only)
+        for i in range(n):
+            for l in range(1, min(10, n - i) + 1):
+                num_str = digits_only[i:i+l].lstrip("0")
+                if num_str:  # skip if it was all zeros
+                    total += int(num_str)
     return total
 
-# Run
-input_text = "12303"
-print("✅ Total:", sum_all_substrings(input_text))  # Output: 16566
+# Example usage
+if __name__ == "__main__":
+    file_path = "input.txt"  # change to your file name
+    total = sum_all_substrings_from_file(file_path)
+    print(f"✅ Total sum from file: {total}")
