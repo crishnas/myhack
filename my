@@ -21,3 +21,24 @@ def sum_all_substrings_from_file(filepath):
 # Example usage:
 file_path = "your_input_file.txt"  # Replace with your actual file
 print("Total Sum:", sum_all_substrings_from_file(file_path))
+
+
+
+def sum_all_substrings_from_file(filepath):
+    with open(filepath, "r") as f:
+        content = f.read()
+
+    # Keep only digits
+    digits = ''.join(filter(str.isdigit, content))
+    total_sum = 0
+    n = len(digits)
+
+    for i in range(n):
+        seen = set()
+        for length in range(1, 11):  # Substrings of length 1 to 10
+            if i + length <= n:
+                num = digits[i:i+length].lstrip('0') or '0'
+                if num not in seen:
+                    seen.add(num)
+                    total_sum += int(num)
+    return total_sum
