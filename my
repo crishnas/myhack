@@ -17,3 +17,27 @@ if __name__ == "__main__":
     
     result = compute_sum_from_digits_string(digits)
     print(f"Total Sum: {result}")
+
+
+
+
+
+def compute_total_sum(s: str) -> int:
+    total = 0
+    n = len(s)
+
+    for i in range(n):
+        for length in range(1, 11):  # 1 to 10 digits
+            if i + length <= n:
+                sub = s[i:i+length].lstrip('0') or '0'
+                total += int(sub)
+    return total
+
+# Example test
+if __name__ == "__main__":
+    # Replace this with actual file reading
+    with open("randomDigitsinput.txt", "r") as f:
+        digits = f.read().strip().replace("\n", "").replace(" ", "")
+    
+    result = compute_total_sum(digits)
+    print(f"Total Sum: {result}")
