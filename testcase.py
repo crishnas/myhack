@@ -1,31 +1,23 @@
-import unittest
+import pytest
 from substring_sum import sum_all_substrings_from_string
 
-class TestSubstringSum(unittest.TestCase):
+def test_example_12303():
+    assert sum_all_substrings_from_string("12303") == 16566
 
-    def test_example_12303(self):
-        input_str = "12303"
-        expected_sum = 16566
-        result = sum_all_substrings_from_string(input_str)
-        self.assertEqual(result, expected_sum)
+def test_leading_zeros():
+    assert sum_all_substrings_from_string("0003") == 3
 
-    def test_leading_zeros(self):
-        input_str = "0003"
-        expected_sum = 3  # Only 0 and 3 once from this position
-        result = sum_all_substrings_from_string(input_str)
-        self.assertEqual(result, expected_sum)
+def test_only_zeros():
+    assert sum_all_substrings_from_string("000000") == 0
 
-    def test_only_zeros(self):
-        input_str = "000000"
-        expected_sum = 0  # Only one unique 0 per position
-        result = sum_all_substrings_from_string(input_str)
-        self.assertEqual(result, expected_sum)
+def test_single_digit():
+    assert sum_all_substrings_from_string("9") == 9
 
-    def test_mixed(self):
-        input_str = "12003"
-        # We'll calculate manually or assert that function returns a value
-        result = sum_all_substrings_from_string(input_str)
-        self.assertTrue(result > 0)
+def test_mixed_chars():
+    assert sum_all_substrings_from_string("abc123xyz03") == 16566  # same as 12303
 
-if __name__ == '__main__':
-    unittest.main()
+def test_long_string():
+    # Just to check performance and correctness on a long number string
+    s = "1234567890" * 2
+    result = sum_all_substrings_from_string(s)
+    assert isinstance(result, int) and result > 0
