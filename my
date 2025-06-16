@@ -1,23 +1,13 @@
-def sum_valid_substrings(filepath):
-    with open(filepath, 'r') as file:
-        content = file.read()
-
+def sum_all_substrings(text: str) -> int:
     total = 0
-
-    n = len(content)
+    n = len(text)
     for i in range(n):
-        for length in range(1, 11):  # 1 to 10 digit substrings
-            if i + length <= n:
-                raw = content[i:i+length]
-                clean = raw.lstrip("0") or "0"  # Remove leading zeros, keep "0" if all zeros
-                if clean == "0":
-                    continue  # Exclude zero
-                total += int(clean)
-
+        for l in range(1, min(10, n - i) + 1):
+            num_str = text[i:i+l].lstrip("0")
+            if num_str:  # Exclude zeros and empty
+                total += int(num_str)
     return total
 
-# Example usage
-if __name__ == "__main__":
-    input_path = "input.txt"  # Replace with your file path
-    result = sum_valid_substrings(input_path)
-    print(f"✅ Total sum: {result}")
+# Run
+input_text = "12303"
+print("✅ Total:", sum_all_substrings(input_text))  # Output: 16566
