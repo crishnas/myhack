@@ -29,7 +29,7 @@ def sum_all_substrings_from_string(digits: str) -> int:
     n = len(digits)
 
     for i in range(n):
-        seen = set()
+        seen = set()  # Seen per position
         for length in range(1, 11):
             if i + length <= n:
                 num = digits[i:i+length].lstrip('0') or '0'
