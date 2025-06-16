@@ -21,3 +21,20 @@ def test_long_string():
     s = "1234567890" * 2
     result = sum_all_substrings_from_string(s)
     assert isinstance(result, int) and result > 0
+
+
+def sum_all_substrings_from_string(digits: str) -> int:
+    digits = ''.join(filter(str.isdigit, digits))
+    total_sum = 0
+    n = len(digits)
+
+    for i in range(n):
+        seen = set()
+        for length in range(1, 11):
+            if i + length <= n:
+                num = digits[i:i+length].lstrip('0') or '0'
+                if num not in seen:
+                    seen.add(num)
+                    total_sum += int(num)
+    return total_sum
+
