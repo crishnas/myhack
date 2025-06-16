@@ -1,66 +1,23 @@
-def compute_sum_from_digits_string(digits: str) -> int:
-    total = 0
-    n = len(digits)
-
-    for i in range(n):
-        for length in range(1, 11):  # From 1 to 10 digits
-            if i + length <= n:
-                num_str = digits[i:i+length].lstrip('0') or '0'
-                total += int(num_str)
-    return total
-
-
-# Example usage
-if __name__ == "__main__":
-    with open("randomDigitsinput.txt", "r") as f:
-        digits = f.read().strip().replace('\n', '')
-    
-    result = compute_sum_from_digits_string(digits)
-    print(f"Total Sum: {result}")
-
-
-
-
-
-def compute_total_sum(s: str) -> int:
-    total = 0
-    n = len(s)
-
-    for i in range(n):
-        for length in range(1, 11):  # 1 to 10 digits
-            if i + length <= n:
-                sub = s[i:i+length].lstrip('0') or '0'
-                total += int(sub)
-    return total
-
-# Example test
-if __name__ == "__main__":
-    # Replace this with actual file reading
-    with open("randomDigitsinput.txt", "r") as f:
-        digits = f.read().strip().replace("\n", "").replace(" ", "")
-    
-    result = compute_total_sum(digits)
-    print(f"Total Sum: {result}")
-
-
-def sum_all_contiguous_numbers(filepath: str) -> int:
-    with open(filepath, 'r') as f:
-        digits = f.read().strip().replace('\n', '')
+def sum_valid_substrings(filepath):
+    with open(filepath, 'r') as file:
+        content = file.read()
 
     total = 0
-    n = len(digits)
 
+    n = len(content)
     for i in range(n):
-        for length in range(1, 11):  # Lengths from 1 to 10
+        for length in range(1, 11):  # 1 to 10 digit substrings
             if i + length <= n:
-                substring = digits[i:i+length]
-                number = int(substring.lstrip('0') or '0')  # Treat "03" as 3
-                total += number
+                raw = content[i:i+length]
+                clean = raw.lstrip("0") or "0"  # Remove leading zeros, keep "0" if all zeros
+                if clean == "0":
+                    continue  # Exclude zero
+                total += int(clean)
 
     return total
 
 # Example usage
 if __name__ == "__main__":
-    file_path = "randomDigitsinput.txt"  # Replace with your actual file path
-    result = sum_all_contiguous_numbers(file_path)
-    print("Final Sum =", result)
+    input_path = "input.txt"  # Replace with your file path
+    result = sum_valid_substrings(input_path)
+    print(f"✅ Total sum: {result}")
