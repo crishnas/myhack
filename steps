@@ -1,0 +1,81 @@
+STEP-BY-STEP GUIDE
+🔹 Step 1: Prepare Data in Alteryx
+Open Alteryx Designer
+
+Input data from Excel/CSV/Database/API.
+
+Use tools to:
+
+Join datasets
+
+Clean/transform data
+
+Aggregate or enrich fields (e.g., segmentation, scoring)
+
+Output Options:
+
+Use “Output Data” tool:
+
+Format: .hyper, .tde, or .csv
+
+Destination: Local file or publish to Tableau Server
+
+Or use “Publish to Tableau Server” tool for direct push.
+
+🔄 Set Alteryx workflow to automate refresh if needed.
+
+🔹 Step 2: Connect to Snowflake in Tableau
+Open Tableau Desktop.
+
+Select “Snowflake” from the list of connectors.
+
+Provide credentials:
+
+Server: xyz.snowflakecomputing.com
+
+Warehouse, database, schema, and role
+
+Choose live or extract mode.
+
+Drag tables or views into the canvas.
+
+🔹 Step 3: Bring in Alteryx Output
+In Tableau Desktop, go to:
+
+Data → New Data Source → Hyper File
+(or connect to Tableau Server if published from Alteryx)
+
+Choose your .hyper or .tde file from disk.
+
+Confirm schema and data preview.
+
+🔹 Step 4: Combine Both Data Sources
+Option A: Relationships (Recommended)
+In Data Model (logical layer), drag both sources in and create relationship using a common key (customer_id, region, etc.)
+
+Tableau joins them only when needed → better performance.
+
+Option B: Data Blending (Older method)
+Use one source as primary (blue checkmark), others as secondary.
+
+Link by common dimension in the worksheet (e.g., customer_id).
+
+🔹 Step 5: Create Dashboard
+Create visualizations (charts, KPIs, tables) from both data sources.
+
+Drag sheets into a Dashboard view.
+
+Add filters, interactivity, parameters, etc.
+
+Validate filters work across sources if blending/relationships are used.
+
+🔹 Step 6: Publish to Tableau Server (Optional)
+File → Publish to Tableau Server
+
+Include:
+
+Extract refresh settings
+
+Credentials for Snowflake (prompted or embedded)
+
+Create refresh schedule for .hyper files (if using Tableau Server)
