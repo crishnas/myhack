@@ -1,0 +1,87 @@
+Summary: Grady Report Concerns & Next Steps
+🔍 Context:
+Mike generated a summary-level report from the Grady database, intended to provide quick visibility into open operational cases (enrollment/redemption).
+
+The report helped reduce anxiety by surfacing volume but raised major data quality and completeness concerns:
+
+~13,000 outstanding cases reported.
+
+No fulfillment cases were included.
+
+Some cases >60 days old, which seems inaccurate.
+
+No drill-down capability or detailed case context.
+
+Data pulled solely from Grady — known to be unreliable.
+
+❗ Key Concerns Raised:
+Data Validity:
+
+Is 13,000 a valid count of “outstanding” cases?
+
+Aging logic is questionable. Back office processes shouldn’t allow 60+ day old cases.
+
+Missing Case Types:
+
+Report does not include fulfillment cases — an essential component.
+
+Inaccurate Source Data:
+
+Grady is not a trusted system of record.
+
+Moving Grady data to Snowflake or Alteryx won’t solve data quality issues — just relocates the problem.
+
+Limited Scope of Mike’s Report:
+
+Original intent was only to provide oversight of operations team workloads post-partner interactions — not full end-to-end visibility.
+
+Larger picture (from Realms download to Ops resolution) was never in scope for that report.
+
+🧭 Clarifications Provided:
+Team Goal:
+Build end-to-end dashboards across 3 vantage points:
+
+Realms data (batch process tracking)
+
+API-based enrollment verification
+
+Grady/Operations case handling
+
+Mike’s Report:
+Served as a temporary visibility tool — not the foundation for long-term reporting.
+Acknowledged as limited, but helped flag open questions.
+
+Long-Term Problem Acknowledged:
+The real solution is replacing legacy systems (Grady + backend) — underway via a separate stream led by Ashley & Don.
+
+✅ Consensus:
+Using Grady data as-is won’t produce a reliable work-in-progress (WIP) report.
+
+Building dashboards in Snowflake on bad source data is not a fix.
+
+Access to Grady via FIDS won’t help unless the underlying data quality improves.
+
+🔄 Recommended Next Steps:
+Clarify Report Requirements (ASAP):
+
+Define exact metrics and fields needed for end-to-end WIP reporting.
+
+Separate expectations: what is feasible today vs. what needs system transformation.
+
+Data Profiling & Validation Exercise:
+
+Perform a joint analysis of Grady data (sample extract) to validate Don’s and Mike’s assumptions.
+
+Identify data gaps and fields needed for fulfillment/aging logic.
+
+Alteryx Prototype (Short-Term):
+
+Use Alteryx (or similar tooling) to build interim visualizations.
+
+Clearly mark limitations due to known data gaps in Grady.
+
+Long-Term Ownership:
+
+Align with Ashley & Don on the target state systems roadmap.
+
+Ensure reporting use cases are fed into those plans.
