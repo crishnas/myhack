@@ -1,0 +1,119 @@
+Phase 1: Define the Application Scope and Modules
+Prompt 1: Define Architecture
+sql
+Copy
+Edit
+Design an end-to-end real-time credit card application system with the following components:
+1. Application submission (form UI),
+2. Background verification (KYC, credit check),
+3. Approval decision logic,
+4. Virtual card generation (e-card),
+5. Admin and user dashboards for status tracking and insights.
+
+Use WinSurf for stream processing and background tasks, and Streamlit for the frontend interface. Structure it in a modular, testable way.
+Prompt 2: Directory Structure
+markdown
+Copy
+Edit
+Suggest a clean and scalable folder structure for the credit card application project with these components:
+- app (Streamlit frontend),
+- backend (API services and WinSurf pipelines),
+- models (data models and schemas),
+- services (business logic),
+- tests (unit tests),
+- utils (helpers, config).
+
+Use Python best practices and include `__init__.py` where needed.
+🧾 Phase 2: Build Core Modules
+Prompt 3: Streamlit UI – Apply for Card
+less
+Copy
+Edit
+Create a Streamlit UI form to collect credit card application details:
+- Full name, email, mobile, PAN number, address, income, employment type.
+Store form inputs and send them to the backend for verification using a mock API or WinSurf pipeline trigger.
+Prompt 4: WinSurf Verification Pipeline
+vbnet
+Copy
+Edit
+Using WinSurf, write a Python pipeline to verify credit card application data:
+- Validate PAN using a regex,
+- Simulate credit score (random 300–900),
+- Simulate KYC completion (random True/False).
+
+Publish verification results back to a Kafka topic or a Redis stream.
+Prompt 5: Approval Logic
+vbnet
+Copy
+Edit
+Implement approval logic in a separate WinSurf operator or microservice:
+- Read from the verification result stream,
+- Approve if credit score >= 750 and KYC is True,
+- Otherwise, reject with reason.
+
+Emit final approval status and message to another stream.
+Prompt 6: Virtual e-Card Generator
+typescript
+Copy
+Edit
+Design a function to generate an e-card upon approval:
+- Generate 16-digit card number, expiry, CVV,
+- Save as a JSON or QR code image,
+- Display in Streamlit if approved.
+
+Integrate this with the approval stream output.
+📊 Phase 3: Dashboard and Real-Time Monitoring
+Prompt 7: Admin Dashboard
+diff
+Copy
+Edit
+Create a Streamlit dashboard for admin users showing:
+- Total applications received,
+- Approved vs Rejected count,
+- Credit score distribution (histogram),
+- Real-time list of active applicants and their status (poll from Redis/Kafka).
+Prompt 8: User Status Tracker
+sql
+Copy
+Edit
+Build a Streamlit page where a user can enter email/mobile to track their application:
+- Fetch status from backend or stream storage,
+- If approved, display e-card details.
+
+Use polling to show real-time updates.
+✅ Phase 4: Add Unit Tests and Refactor Code
+Prompt 9: Unit Tests for All Modules
+markdown
+Copy
+Edit
+Generate pytest-based unit tests for:
+1. PAN validator,
+2. Credit score simulator,
+3. KYC result handler,
+4. Approval logic,
+5. Virtual card generator,
+6. Streamlit form input validation.
+
+Mock external services (Kafka/Redis) using pytest fixtures or monkeypatching.
+Prompt 10: Refactor Codebase
+diff
+Copy
+Edit
+Refactor the entire credit card application system for:
+- Separation of concerns (UI, logic, I/O),
+- Testability (pure functions, dependency injection),
+- Logging and error handling.
+
+Apply Python best practices: typing hints, PEP8, docstrings.
+🧪 Optional: Add E2E Integration Tests
+Prompt 11: Integration Test for End-to-End Flow
+diff
+Copy
+Edit
+Write integration tests to simulate:
+- Submitting an application,
+- Completing verification,
+- Approval/rejection based on logic,
+- E-card generation for approved users.
+
+Use in-memory mocks for Kafka/Redis or test doubles.
