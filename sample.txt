@@ -1,128 +1,40 @@
-Here is a complete step-by-step prompt set to build an all-in-one Daily Productivity Tracker App using Python and Streamlit, which includes:
+Build a real-time, single-page file and content search application using WinSurf (Python) and Streamlit.
 
-✅ Daily task list
+Functional Requirements:
+1. Allow users to select a root folder path and enter a search query.
+2. Provide two search modes: 
+   - File Name Search (match against file names)
+   - Content Search (match query inside text files)
+3. Show real-time results as they are found:
+   - For file name match: show full path and file size
+   - For content match: show file path, matched line number, and preview text
+4. Provide search filters:
+   - File type filter (e.g., .txt, .py, .md)
+   - Case sensitivity toggle
+   - Limit number of results
 
-✅ Meetings & MoM (Minutes of Meeting)
+Architecture:
+- Use WinSurf to stream file system traversal and search operations
+- Emit each matched file/result as a stream event to the UI
+- Use Streamlit to render a single-page interface with:
+   - Sidebar for inputs and filters
+   - Main panel for streaming results
+   - Progress indicator and stats (e.g., total files scanned, matches found)
 
-✅ Bookmark links list
+Technical Design:
+- Use `os.scandir` or `os.walk` for recursive traversal
+- Wrap traversal and matching logic into a WinSurf `Generator` or `Operator`
+- Use `concurrent.futures.ThreadPoolExecutor` for parallel file read
+- For content search, use `mmap` or buffered read for speed
+- Stream results as JSON events with metadata
+- Streamlit subscribes to updates and renders real-time matches
 
-✅ Analysis notes
+Performance Notes:
+- Handle large directory trees efficiently (e.g., 100k+ files)
+- Use chunked processing or batching
+- Use debounce or throttling for rapid queries
 
-✅ Features to Add, Edit, and Dashboard View
-
-🔧 Phase 1: Project Setup & Architecture
-✅ Prompt 1: Define Scope and Features
-sql
-Copy
-Edit
-Design a Streamlit-based productivity application in Python that includes the following modules:
-1. Daily Task List with add/edit/complete features,
-2. Meetings & MoM notes by date and topic,
-3. Bookmark Links with title and category,
-4. Analysis Notes with tags,
-5. Unified dashboard to view summaries of all modules.
-
-Use Python for backend logic and Streamlit for UI. Data can be stored in local JSON/CSV or SQLite.
-✅ Prompt 2: Directory Structure
-markdown
-Copy
-Edit
-Propose a clean folder structure for this Streamlit app including:
-- `app/` (UI code),
-- `models/` (data classes or schemas),
-- `services/` (data handlers, persistence logic),
-- `data/` (local DB or JSON store),
-- `tests/`,
-- `utils/`.
-
-Follow Python best practices for modularity and reusability.
-📝 Phase 2: Task Manager Module
-✅ Prompt 3: Task List UI & Functionality
-bash
-Copy
-Edit
-Build a Streamlit page to manage daily tasks:
-- Fields: Task title, description, priority, due date, status (Pending/Done).
-- Features: Add task, Edit task, Mark as done, Delete task.
-- Store tasks in SQLite or JSON.
-
-Include filters for today/this week/completed.
-📅 Phase 3: Meetings and MoM Notes
-✅ Prompt 4: MoM Notes Feature
-pgsql
-Copy
-Edit
-Create a Streamlit form to capture Meeting Minutes of Meeting (MoM):
-- Fields: Date, Meeting Title, Participants, Notes.
-- Display recent MoMs in a timeline or table.
-- Store MoMs in a local SQLite DB.
-
-Add ability to edit or delete old entries.
-🔗 Phase 4: Bookmark Manager
-✅ Prompt 5: Bookmarks UI
-diff
-Copy
-Edit
-Create a Streamlit page for managing bookmarks:
-- Fields: Title, URL, Category (e.g., Docs, Dev, Research).
-- Features: Add, Edit, Delete.
-- Display as clickable links grouped by category.
-
-Store data locally in SQLite or JSON.
-🧠 Phase 5: Analysis Notes
-✅ Prompt 6: Notes Input and Tagging
-diff
-Copy
-Edit
-Create a note-taking UI in Streamlit for Analysis Notes:
-- Fields: Title, Content, Tags (comma-separated).
-- Features: Add, Edit, Delete notes.
-- Search by tags or title.
-- Use collapsible panels to display note content.
-
-Persist notes locally.
-📊 Phase 6: Unified Dashboard
-✅ Prompt 7: Streamlit Dashboard Page
-diff
-Copy
-Edit
-Design a dashboard in Streamlit that shows:
-- Summary of pending and completed tasks,
-- MoMs from the current week,
-- Bookmarks by category,
-- Recent analysis notes.
-
-Use charts, badges, or expandable sections to enhance visuals.
-🔍 Phase 7: Search & Filtering
-✅ Prompt 8: Global Search and Filters
-sql
-Copy
-Edit
-Add a global search box and filtering options:
-- Allow users to search across tasks, MoMs, bookmarks, and notes.
-- Show matching results with type indicators (Task, MoM, Note, etc.).
-
-Use efficient filtering logic and simple text matching.
-🧪 Phase 8: Unit Tests & Refactoring
-✅ Prompt 9: Unit Test Prompts
-bash
-Copy
-Edit
-Write unit tests for the following modules using pytest:
-- Task service (add/edit/delete/mark done),
-- MoM storage logic,
-- Bookmark save/load/delete,
-- Analysis notes tagging and retrieval.
-
-Use in-memory mocks or temporary file/database.
-✅ Prompt 10: Code Refactor Suggestions
-diff
-Copy
-Edit
-Refactor the Streamlit productivity app for:
-- Separation of UI and logic layers,
-- Improved maintainability (use classes or functions),
-- Clear logging and exception handling,
-- PEP8 and typing annotations.
-
-Include config files for paths and constants.
+Bonus:
+- Option to download matched file
+- Click to expand match context (e.g., ±2 lines)
+- Show "time taken" for search
