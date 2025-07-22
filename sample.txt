@@ -1,119 +1,128 @@
-Phase 1: Define the Application Scope and Modules
-Prompt 1: Define Architecture
+Here is a complete step-by-step prompt set to build an all-in-one Daily Productivity Tracker App using Python and Streamlit, which includes:
+
+✅ Daily task list
+
+✅ Meetings & MoM (Minutes of Meeting)
+
+✅ Bookmark links list
+
+✅ Analysis notes
+
+✅ Features to Add, Edit, and Dashboard View
+
+🔧 Phase 1: Project Setup & Architecture
+✅ Prompt 1: Define Scope and Features
 sql
 Copy
 Edit
-Design an end-to-end real-time credit card application system with the following components:
-1. Application submission (form UI),
-2. Background verification (KYC, credit check),
-3. Approval decision logic,
-4. Virtual card generation (e-card),
-5. Admin and user dashboards for status tracking and insights.
+Design a Streamlit-based productivity application in Python that includes the following modules:
+1. Daily Task List with add/edit/complete features,
+2. Meetings & MoM notes by date and topic,
+3. Bookmark Links with title and category,
+4. Analysis Notes with tags,
+5. Unified dashboard to view summaries of all modules.
 
-Use WinSurf for stream processing and background tasks, and Streamlit for the frontend interface. Structure it in a modular, testable way.
-Prompt 2: Directory Structure
+Use Python for backend logic and Streamlit for UI. Data can be stored in local JSON/CSV or SQLite.
+✅ Prompt 2: Directory Structure
 markdown
 Copy
 Edit
-Suggest a clean and scalable folder structure for the credit card application project with these components:
-- app (Streamlit frontend),
-- backend (API services and WinSurf pipelines),
-- models (data models and schemas),
-- services (business logic),
-- tests (unit tests),
-- utils (helpers, config).
+Propose a clean folder structure for this Streamlit app including:
+- `app/` (UI code),
+- `models/` (data classes or schemas),
+- `services/` (data handlers, persistence logic),
+- `data/` (local DB or JSON store),
+- `tests/`,
+- `utils/`.
 
-Use Python best practices and include `__init__.py` where needed.
-🧾 Phase 2: Build Core Modules
-Prompt 3: Streamlit UI – Apply for Card
-less
+Follow Python best practices for modularity and reusability.
+📝 Phase 2: Task Manager Module
+✅ Prompt 3: Task List UI & Functionality
+bash
 Copy
 Edit
-Create a Streamlit UI form to collect credit card application details:
-- Full name, email, mobile, PAN number, address, income, employment type.
-Store form inputs and send them to the backend for verification using a mock API or WinSurf pipeline trigger.
-Prompt 4: WinSurf Verification Pipeline
-vbnet
+Build a Streamlit page to manage daily tasks:
+- Fields: Task title, description, priority, due date, status (Pending/Done).
+- Features: Add task, Edit task, Mark as done, Delete task.
+- Store tasks in SQLite or JSON.
+
+Include filters for today/this week/completed.
+📅 Phase 3: Meetings and MoM Notes
+✅ Prompt 4: MoM Notes Feature
+pgsql
 Copy
 Edit
-Using WinSurf, write a Python pipeline to verify credit card application data:
-- Validate PAN using a regex,
-- Simulate credit score (random 300–900),
-- Simulate KYC completion (random True/False).
+Create a Streamlit form to capture Meeting Minutes of Meeting (MoM):
+- Fields: Date, Meeting Title, Participants, Notes.
+- Display recent MoMs in a timeline or table.
+- Store MoMs in a local SQLite DB.
 
-Publish verification results back to a Kafka topic or a Redis stream.
-Prompt 5: Approval Logic
-vbnet
-Copy
-Edit
-Implement approval logic in a separate WinSurf operator or microservice:
-- Read from the verification result stream,
-- Approve if credit score >= 750 and KYC is True,
-- Otherwise, reject with reason.
-
-Emit final approval status and message to another stream.
-Prompt 6: Virtual e-Card Generator
-typescript
-Copy
-Edit
-Design a function to generate an e-card upon approval:
-- Generate 16-digit card number, expiry, CVV,
-- Save as a JSON or QR code image,
-- Display in Streamlit if approved.
-
-Integrate this with the approval stream output.
-📊 Phase 3: Dashboard and Real-Time Monitoring
-Prompt 7: Admin Dashboard
+Add ability to edit or delete old entries.
+🔗 Phase 4: Bookmark Manager
+✅ Prompt 5: Bookmarks UI
 diff
 Copy
 Edit
-Create a Streamlit dashboard for admin users showing:
-- Total applications received,
-- Approved vs Rejected count,
-- Credit score distribution (histogram),
-- Real-time list of active applicants and their status (poll from Redis/Kafka).
-Prompt 8: User Status Tracker
+Create a Streamlit page for managing bookmarks:
+- Fields: Title, URL, Category (e.g., Docs, Dev, Research).
+- Features: Add, Edit, Delete.
+- Display as clickable links grouped by category.
+
+Store data locally in SQLite or JSON.
+🧠 Phase 5: Analysis Notes
+✅ Prompt 6: Notes Input and Tagging
+diff
+Copy
+Edit
+Create a note-taking UI in Streamlit for Analysis Notes:
+- Fields: Title, Content, Tags (comma-separated).
+- Features: Add, Edit, Delete notes.
+- Search by tags or title.
+- Use collapsible panels to display note content.
+
+Persist notes locally.
+📊 Phase 6: Unified Dashboard
+✅ Prompt 7: Streamlit Dashboard Page
+diff
+Copy
+Edit
+Design a dashboard in Streamlit that shows:
+- Summary of pending and completed tasks,
+- MoMs from the current week,
+- Bookmarks by category,
+- Recent analysis notes.
+
+Use charts, badges, or expandable sections to enhance visuals.
+🔍 Phase 7: Search & Filtering
+✅ Prompt 8: Global Search and Filters
 sql
 Copy
 Edit
-Build a Streamlit page where a user can enter email/mobile to track their application:
-- Fetch status from backend or stream storage,
-- If approved, display e-card details.
+Add a global search box and filtering options:
+- Allow users to search across tasks, MoMs, bookmarks, and notes.
+- Show matching results with type indicators (Task, MoM, Note, etc.).
 
-Use polling to show real-time updates.
-✅ Phase 4: Add Unit Tests and Refactor Code
-Prompt 9: Unit Tests for All Modules
-markdown
+Use efficient filtering logic and simple text matching.
+🧪 Phase 8: Unit Tests & Refactoring
+✅ Prompt 9: Unit Test Prompts
+bash
 Copy
 Edit
-Generate pytest-based unit tests for:
-1. PAN validator,
-2. Credit score simulator,
-3. KYC result handler,
-4. Approval logic,
-5. Virtual card generator,
-6. Streamlit form input validation.
+Write unit tests for the following modules using pytest:
+- Task service (add/edit/delete/mark done),
+- MoM storage logic,
+- Bookmark save/load/delete,
+- Analysis notes tagging and retrieval.
 
-Mock external services (Kafka/Redis) using pytest fixtures or monkeypatching.
-Prompt 10: Refactor Codebase
+Use in-memory mocks or temporary file/database.
+✅ Prompt 10: Code Refactor Suggestions
 diff
 Copy
 Edit
-Refactor the entire credit card application system for:
-- Separation of concerns (UI, logic, I/O),
-- Testability (pure functions, dependency injection),
-- Logging and error handling.
+Refactor the Streamlit productivity app for:
+- Separation of UI and logic layers,
+- Improved maintainability (use classes or functions),
+- Clear logging and exception handling,
+- PEP8 and typing annotations.
 
-Apply Python best practices: typing hints, PEP8, docstrings.
-🧪 Optional: Add E2E Integration Tests
-Prompt 11: Integration Test for End-to-End Flow
-diff
-Copy
-Edit
-Write integration tests to simulate:
-- Submitting an application,
-- Completing verification,
-- Approval/rejection based on logic,
-- E-card generation for approved users.
-
-Use in-memory mocks for Kafka/Redis or test doubles.
+Include config files for paths and constants.
